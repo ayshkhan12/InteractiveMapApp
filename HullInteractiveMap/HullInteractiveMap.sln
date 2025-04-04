@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HullInteractiveMap", "HullInteractiveMap.csproj", "{5BF9AE5E-059E-4D5F-BBBC-9D961812DFCC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BF9AE5E-059E-4D5F-BBBC-9D961812DFCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BF9AE5E-059E-4D5F-BBBC-9D961812DFCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BF9AE5E-059E-4D5F-BBBC-9D961812DFCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BF9AE5E-059E-4D5F-BBBC-9D961812DFCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69B81DF2-96F1-447D-B1D2-33BCD48DBA0F}
+	EndGlobalSection
+EndGlobal

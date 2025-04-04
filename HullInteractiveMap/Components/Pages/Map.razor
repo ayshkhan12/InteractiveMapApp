@@ -1,0 +1,92 @@
+﻿<h3>Map</h3>
+
+@page "/map"
+@inject NavigationManager NavigationManager
+@inject SvgProcessingService SvgProcessor
+@inject RoomDataService RoomData
+@implements IAsyncDisposable
+
+<div class="map-container">
+    <!-- Floor selector -->
+    <div class="floor-selector">
+        @foreach (var floor in new[] {1, 2, 3})
+        {
+            <button class="@(currentFloor == floor ? "active" : "")" 
+                    @onclick="() => ShowFloor(floor)">
+                Floor @floor
+            </button>
+        }
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-container">
+        <input type="text" @bind="searchQuery" placeholder="Search room..." />
+        <button @onclick="SearchRoom" class="btn btn-primary">
+            <span class="oi oi-magnifying-glass"></span>
+        </button>
+    </div>
+
+    <!-- Map display -->
+    <div class="svg-container">
+        @if (currentFloorSvg != null)
+        {
+            <div @ref="svgElement" 
+                 @onclick="HandleMapClick"
+                 class="svg-wrapper">
+                @((MarkupString)currentFloorSvg)
+            </div>
+        }
+    </div>
+
+    <!-- Room info panel -->
+    <RoomInfoPanel Room="@selectedRoom" />
+</div>
+
+@code {
+    private int currentFloor = 1;
+    private string searchQuery = "";
+    private Room? selectedRoom;
+    private string? currentFloorSvg;
+    private ElementReference svgElement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFloorSvg(1);
+    }
+
+    private async Task LoadFloorSvg(int floor)
+    {
+        var svgContent = await LoadSvgFile($"maps/{(floor switch {
+            1 => "first",
+            2 => "second",
+            _ => "third"
+        })}.svg");
+        
+        currentFloorSvg = SvgProcessor.ProcessSvg(svgContent, floor);
+        currentFloor = floor;
+    }
+
+    private async Task<string> LoadSvgFile(string path)
+    {
+        var http = new HttpClient();
+        return await http.GetStringAsync($"{NavigationManager.BaseUri}{path}");
+    }
+
+    private async Task SearchRoom()
+    {
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            selectedRoom = RoomData.GetRoom(searchQuery);
+            if (selectedRoom != null)
+            {
+                await LoadFloorSvg(selectedRoom.Floor);
+                await JsInterop.HighlightRoom(selectedRoom.Id);
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await JsInterop.DisposeAsync();
+    }
+}

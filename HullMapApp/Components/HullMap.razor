@@ -1,0 +1,108 @@
+﻿@using BlazorLeaflet.Models
+@using BlazorLeaflet
+@inject HttpClient Http
+
+<div class="map-controls">
+    <input @bind="searchQuery" placeholder="Search Hull locations..." />
+    <button @onclick="SearchLocations">Search</button>
+</div>
+
+@code {
+    private string searchQuery;
+
+    private async Task SearchLocations()
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery)) return;
+
+        var hullData = await Http.GetFromJsonAsync<HullData>("data/HullLocations.json");
+        var results = hullData.Landmarks
+            .Where(l => l.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (results.Any())
+        {
+            var firstResult = results.First();
+            await map.SetView(new LatLng(firstResult.Latitude, firstResult.Longitude), 15);
+        }
+    }
+}
+
+<div id="map" style="height: 600px; width: 100%;"></div>
+
+@code {
+    private Map map;
+    private Marker userMarker;
+    private List<Marker> hullMarkers = new();
+    private List<Polygon> hullAreas = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            map = await BlazorLeaflet.Map.Create("map");
+            await map.SetView(new LatLng(53.744, -0.345), 13);
+
+            // Add tile layer (OpenStreetMap)
+            await map.AddLayer(new TileLayer
+                {
+                    UrlTemplate = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    Attribution = "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a>"
+                });
+
+            // Load Hull data
+            await LoadHullData();
+        }
+    }
+
+    private async Task LoadHullData()
+    {
+        // Load landmarks from JSON
+        var hullData = await Http.GetFromJsonAsync<HullData>("data/HullLocations.json");
+
+        foreach (var landmark in hullData.Landmarks)
+        {
+            var position = new LatLng(landmark.Latitude, landmark.Longitude);
+            var marker = new Marker(position)
+                {
+                    Popup = new Popup { Content = $"<b>{landmark.Name}</b><br>{landmark.Type}" }
+                };
+            hullMarkers.Add(marker);
+            await map.AddLayer(marker);
+        }
+
+        foreach (var boundary in hullData.Boundaries)
+        {
+            var polygon = new Polygon
+                {
+                    Shape = boundary.Coordinates.Select(c => new LatLng(c[0], c[1])).ToList(),
+                    Fill = true,
+                    FillColor = "blue",
+                    Color = "navy",
+                    FillOpacity = 0.1,
+                    Weight = 2,
+                    Popup = new Popup { Content = boundary.Name }
+                };
+            hullAreas.Add(polygon);
+            await map.AddLayer(polygon);
+        }
+    }
+
+    public class HullData
+    {
+        public List<Landmark> Landmarks { get; set; }
+        public List<Boundary> Boundaries { get; set; }
+    }
+
+    public class Landmark
+    {
+        public string Name { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string Type { get; set; }
+    }
+
+    public class Boundary
+    {
+        public string Name { get; set; }
+        public List<double[]> Coordinates { get; set; }
+    }

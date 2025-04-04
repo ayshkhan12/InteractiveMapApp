@@ -1,0 +1,27 @@
+{
+  "landmarks": [
+    {
+      "name": "The Deep",
+      "latitude": 53.7406,
+      "longitude": -0.3351,
+      "type": "attraction"
+    },
+    {
+      "name": "Hull City Hall",
+      "latitude": 53.7444,
+      "longitude": -0.3456,
+      "type": "building"
+    }
+  ],
+  "boundaries": [
+    {
+      "name": "City Center",
+      "coordinates": [
+        [ 53.8, -0.4 ],
+        [ 53.8, -0.3 ],
+        [ 53.7, -0.3 ],
+        [ 53.7, -0.4 ]
+      ]
+    }
+  ]
+}

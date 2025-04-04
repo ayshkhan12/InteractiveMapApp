@@ -1,0 +1,70 @@
+<svg id="main_stairs" data-name="main stairs" xmlns="http://www.w3.org/2000/svg" width="3358" height="4747" viewBox="0 0 3358 4747">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 5.07px;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M2225.31,3758.41v147"/>
+  <path class="cls-1" d="M2214.33,3758.41v147"/>
+  <path class="cls-1" d="M2204.35,3758.41v147"/>
+  <path class="cls-1" d="M2194.36,3758.41v147"/>
+  <path id="stairs" class="cls-1" d="M2126,3907.41h156v-152H2126v152Z"/>
+  <path id="_022" data-name="022" class="cls-1" d="M2129,3437h239v-38H2129v38Z"/>
+  <path id="_022-2" data-name="022" class="cls-1" d="M2148,4648h224v-41H2148v41Z"/>
+  <path id="_017" data-name="017" class="cls-1" d="M1735.3,471.5V820.08h115.12v249.67H2132V1522h238V1371.22h342V471.5H1735.3Z"/>
+  <path id="_008" data-name="008" class="cls-1" d="M1239,1066h-53V811h52.66Z"/>
+  <path id="_015" data-name="015" class="cls-1" d="M1501.05,654l-0.35,158.986-77.7-.428V654h78.05Zm0,0-0.35,158.986-77.7-.428V654h78.05Z"/>
+  <path id="_014" data-name="014" class="cls-1" d="M1502,654.779l-0.36,157.207-78.64-.423V654.779h79ZM1502,495l-0.36,161.762-78.64-.435V495h79Z"/>
+  <path id="_009" data-name="009" class="cls-1" d="M1191.23,494.946h235.22V812.423H1185.24V700h5.99V494.946Z"/>
+  <path id="_007" data-name="007" class="cls-1" d="M1419,1371h242V1182H1419v189Z"/>
+  <path id="_024" data-name="024" class="cls-1" d="M1903,1303h163V1143H1903v160Z"/>
+  <path id="_025" data-name="025" class="cls-1" d="M1821,1461h245V1301H1821v160Z"/>
+  <path id="_026" data-name="026" class="cls-1" d="M1821,1620h245V1460H1821v160Z"/>
+  <path id="_038F" data-name="038F" class="cls-1" d="M2366,1523h346V1367H2366v156Z"/>
+  <path id="_038E" data-name="038E" class="cls-1" d="M2467,1995h245V1522H2467v473Z"/>
+  <path id="_038B" data-name="038B" class="cls-1" d="M2467,2155h245V1995H2467v160Z"/>
+  <path id="_038A" data-name="038A" class="cls-1" d="M2467,2155v310h245V2155H2467Z"/>
+  <path id="_039A" data-name="039A" class="cls-1" d="M2368,2465v312h344V2465H2368Z"/>
+  <path id="_039-2" data-name="039" class="cls-1" d="M2048,2772V2539h245v76.33h75V2772H2048Zm320-156.67V2772H2048m320-156.67V2772H2048"/>
+  <path id="_027" data-name="027" class="cls-1" d="M1821,1928h245V1617H1821v311Z"/>
+  <path id="_066C" data-name="066C" class="cls-1" d="M2371,3555l0.43,237H2712V3555H2371Zm0,0,0.43,237,339.56-.31L2709.57,3555H2371Z"/>
+  <path id="_066A" data-name="066A" class="cls-1" d="M2446,3947l0.33,241H2712V3947H2446Zm0,0,0.33,241,264.88-.32-1.1-240.68H2446Z"/>
+  <path id="_064B" data-name="064B" class="cls-1" d="M2146,4330l0.28,277H2372V4330H2146Zm0,0,0.28,277,225.05-.37L2370.39,4330H2146Z"/>
+  <path id="_064A" data-name="064A" class="cls-1" d="M1821,4330l0.41,318H2148V4330H1821Zm0,0,0.41,318,325.62-.42L2145.67,4330H1821Z"/>
+  <path id="_063" data-name="063" class="cls-1" d="M1821,4101l0.31,229H2071V4101H1821Zm0,0,0.31,229,248.95-.3-1.04-228.7H1821Z"/>
+  <path id="_062" data-name="062" class="cls-1" d="M1821,3941l0.31,163H2071V3941H1821Zm0,0,0.31,163,248.95-.22L2069.22,3941H1821Z"/>
+  <path id="_067" data-name="067" class="cls-1" d="M2371,4183l0.43,465H2712V4183H2371Zm0,0,0.43,465,339.56-.61L2709.57,4183H2371Z"/>
+  <path id="_066B" data-name="066B" class="cls-1" d="M2446,3791l0.33,156H2712V3791H2446Zm0,0,0.33,156,264.88-.21-1.1-155.79H2446Z"/>
+  <path id="_041A" data-name="041A" class="cls-1" d="M2048,3240v160h320V3240H2048Z"/>
+  <path id="_041B" data-name="041B" class="cls-1" d="M2368,3242v315h344V3242H2368Z"/>
+  <path id="_041B-2" data-name="041B" class="cls-1" d="M2048,2772v474h664V2772H2048Z"/>
+  <path id="_047" data-name="047" class="cls-1" d="M2048,2308v233h245v-76.34h75V2308H2048Zm320,156.66V2308H2048m320,156.66V2308H2048"/>
+  <path id="_048" data-name="048" class="cls-1" d="M1821,2310h156V2075H1821v235Z"/>
+  <path id="_019" data-name="019" class="cls-1" d="M2048,2155h143v-80H2048v80Z"/>
+  <path id="_046" data-name="046" class="cls-1" d="M2048,2310h318V2153H2048v157Z"/>
+  <path id="_020" data-name="020" class="cls-1" d="M2127,2193h239v-38H2127v38Z"/>
+  <path id="_049" data-name="049" class="cls-1" d="M1821,2538h156V2310H1821v228Z"/>
+  <path id="_050" data-name="050" class="cls-1" d="M1821,2690h156V2538H1821v152Z"/>
+  <path id="_051" data-name="051" class="cls-1" d="M1821,2854h156V2690H1821v164Z"/>
+  <path id="_052" data-name="052" class="cls-1" d="M1821,3007h156V2854H1821v153Z"/>
+  <path id="_053" data-name="053" class="cls-1" d="M1821,3164h156V3007H1821v157Z"/>
+  <path id="_054" data-name="054" class="cls-1" d="M1821,3319h156V3164H1821v155Z"/>
+  <path id="_053-2" data-name="053" class="cls-1" d="M1821,3480h156V3319H1821v161Z"/>
+  <path id="_056" data-name="056" class="cls-1" d="M1821,3641h156V3480H1821v161Z"/>
+  <path id="_023" data-name="023" class="cls-1" d="M1661,1371h161.03v-68.08h81.38V1143.19L1661,1143v228Z"/>
+  <path id="toilets" class="cls-1" d="M1234.97,1066.3h267.45V809.375H1234.97V1066.3Z"/>
+  <path id="toilets_" data-name="toilets " class="cls-1" d="M2104,3713.99h267.01V3434H2104v279.99Z"/>
+  <path id="_069" data-name="069" class="cls-1" d="M1040,1233l-470.728.12,0.168,137.77L1267,1371v-69H1040v-69Z"/>
+  <path class="cls-1" d="M1039,743h147"/>
+  <path class="cls-1" d="M1039,752.98h147"/>
+  <path class="cls-1" d="M1039,761.962h147"/>
+  <path class="cls-1" d="M1039,768.948h147"/>
+  <path id="_004" data-name="004" class="cls-1" d="M1037,701h159V495.236L960,495V644h77v57Z"/>
+  <path id="_002" data-name="002" class="cls-1" d="M570,694.175h75V640h396v596H569Z"/>
+  <path id="_003" data-name="003" class="cls-1" d="M960,495V644H646v52H570l-1-201H960Z"/>
+</svg>

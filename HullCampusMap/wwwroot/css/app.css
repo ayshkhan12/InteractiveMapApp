@@ -1,0 +1,123 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.header {
+    background-color: #002147;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+    }
+
+    .header h2 {
+        font-weight: 300;
+        margin-top: 0.5rem;
+    }
+
+.search-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.dropdown, .search-box, .search-btn {
+    margin: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.dropdown {
+    width: 40%;
+}
+
+.search-box {
+    width: 40%;
+}
+
+.search-btn {
+    background-color: #005ea5;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+    .search-btn:hover {
+        background-color: #003f7d;
+    }
+
+.result-text {
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.svg-wrapper {
+    text-align: center;
+    padding: 2rem;
+}
+
+.svg-map {
+    width: 90%;
+    max-width: 900px;
+    height: auto;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-radius: 12px;
+}
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar {
+    background-color: #002147;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+    .nav-brand img {
+        height: 40px;
+        width: auto;
+    }
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    background-color: #f5f7fa;
+}
+
+.footer {
+    background-color: #002147;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}

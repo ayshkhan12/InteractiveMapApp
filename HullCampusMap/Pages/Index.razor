@@ -1,0 +1,74 @@
+﻿@page "/"
+
+<!-- 🔷 University Name -->
+<div class="header">
+    <h1>University of Hull</h1>
+    <h2>Interactive Campus Map</h2>
+</div>
+
+<!-- 🔍 Search and Floor Selection -->
+<div class="search-container">
+    <select @onchange="ChangeFloor" class="dropdown">
+        <option value="floor1.svg">Floor 1</option>
+        <option value="floor2.svg">Floor 2</option>
+        <option value="floor3.svg">Floor 3</option>
+    </select>
+
+    <input type="text" placeholder="Search for a room..." @bind="searchText" class="search-box" />
+    <button @onclick="SearchRoom" class="search-btn">Search</button>
+    <p class="result-text">@searchResult</p>
+</div>
+
+<!-- 🗺️ Interactive Map -->
+@if (!string.IsNullOrEmpty(currentFloor))
+{
+    <div class="svg-wrapper">
+        <object data=@($"/svg/" + currentFloor) type="image/svg+xml" class="svg-map" />
+    </div>
+}
+
+@code {
+    private string currentFloor = "floor1.svg";
+    private string searchText = "";
+    private string searchResult = "";
+
+    private Dictionary<string, List<string>> roomsPerFloor = new()
+        {
+            ["first.svg"] = new List<string> { "A101", "A102", "A103" },
+            ["second.svg"] = new List<string> { "B201", "B202", "B203" },
+            ["third.svg"] = new List<string> { "C301", "C302", "C303" }
+        };
+
+    private void ChangeFloor(ChangeEventArgs e)
+    {
+        currentFloor = e.Value?.ToString();
+        searchResult = "";
+    }
+
+    private void SearchRoom()
+    {
+        var room = searchText.Trim().ToUpper();
+
+        if (string.IsNullOrWhiteSpace(room))
+        {
+            searchResult = "❗ Please enter a room number.";
+            return;
+        }
+
+        if (roomsPerFloor.TryGetValue(currentFloor, out var rooms))
+        {
+            if (rooms.Contains(room))
+            {
+                searchResult = $"✅ Room {room} is on this floor!";
+            }
+            else
+            {
+                searchResult = $"❌ Room {room} not found on this floor.";
+            }
+        }
+        else
+        {
+            searchResult = "❌ Floor data not found.";
+        }
+    }
+}

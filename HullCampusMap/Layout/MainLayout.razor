@@ -1,0 +1,21 @@
+﻿@inherits LayoutComponentBase
+
+<div class="main-layout">
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-brand">
+            <img src="images/uoh-logo.png" alt="University of Hull" />
+            <span>University of Hull Campus Map</span>
+        </div>
+    </header>
+
+    <!-- Main Page Content -->
+    <main class="main-content">
+        @Body
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        &copy; @(DateTime.Now.Year) University of Hull | Interactive Map Project
+    </footer>
+</div>
