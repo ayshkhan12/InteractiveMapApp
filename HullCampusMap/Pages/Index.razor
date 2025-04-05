@@ -1,74 +1,131 @@
 ﻿@page "/"
+@using System.Linq
+@using HullCampusMap.Models  <!-- Add this line -->
+@inject SvgParserService SvgParser
+@inject HttpClient Http
 
-<!-- 🔷 University Name -->
-<div class="header">
-    <h1>University of Hull</h1>
-    <h2>Interactive Campus Map</h2>
-</div>
+<div class="map-page">
+    <!-- 🧭 Sidebar (Left Panel) -->
+    <div class="map-sidebar">
+        <div class="header">
+            <h1>University of Hull</h1>
+            <h2>Interactive Campus Map</h2>
+        </div>
 
-<!-- 🔍 Search and Floor Selection -->
-<div class="search-container">
-    <select @onchange="ChangeFloor" class="dropdown">
-        <option value="floor1.svg">Floor 1</option>
-        <option value="floor2.svg">Floor 2</option>
-        <option value="floor3.svg">Floor 3</option>
-    </select>
+        <div class="controls">
+            <label><strong>Select Floor</strong></label>
+            <select @onchange="ChangeFloor" class="dropdown">
+                <option value="first.svg">First Floor</option>
+                <option value="second.svg">Second Floor</option>
+                <option value="third.svg">Third Floor</option>
+            </select>
 
-    <input type="text" placeholder="Search for a room..." @bind="searchText" class="search-box" />
-    <button @onclick="SearchRoom" class="search-btn">Search</button>
-    <p class="result-text">@searchResult</p>
-</div>
+            <label><strong>Search Room</strong></label>
+            <div class="search-container">
+                <input type="text"
+                       placeholder="Enter room number..."
+                       @bind="searchText"
+                       @bind:event="oninput"
+                       @onfocus="ShowRoomSuggestions"
+                       class="search-box" />
 
-<!-- 🗺️ Interactive Map -->
-@if (!string.IsNullOrEmpty(currentFloor))
-{
-    <div class="svg-wrapper">
-        <object data=@($"/svg/" + currentFloor) type="image/svg+xml" class="svg-map" />
+                @if (showSuggestions && filteredRooms.Any())
+                {
+                    <div class="suggestions-dropdown">
+                        @foreach (var room in filteredRooms)
+                        {
+                            <div class="suggestion-item" @onclick="() => SelectRoom(room)">
+                                @room.Name
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <button @onclick="SearchRoom" class="search-btn">Search</button>
+
+            <p class="result-text">@searchResult</p>
+        </div>
     </div>
-}
+
+    <!-- 🗺️ Map Display (Right Panel) -->
+    <div class="map-display">
+        @if (!string.IsNullOrEmpty(currentFloor))
+        {
+            <object data="@($"/svg/" + currentFloor)" type="image/svg+xml" class="svg-map" />
+        }
+    </div>
+</div>
 
 @code {
-    private string currentFloor = "floor1.svg";
+    private string currentFloor = "first.svg";
     private string searchText = "";
     private string searchResult = "";
+    private bool showSuggestions = false;
+    private List<Room> allRooms = new();
+    private List<Room> filteredRooms = new();
 
-    private Dictionary<string, List<string>> roomsPerFloor = new()
-        {
-            ["first.svg"] = new List<string> { "A101", "A102", "A103" },
-            ["second.svg"] = new List<string> { "B201", "B202", "B203" },
-            ["third.svg"] = new List<string> { "C301", "C302", "C303" }
-        };
+    protected override async Task OnInitializedAsync()
+    {
+        var firstFloorRooms = await SvgParser.GetRoomsFromSvg("first.svg");
+        var secondFloorRooms = await SvgParser.GetRoomsFromSvg("second.svg");
+        var thirdFloorRooms = await SvgParser.GetRoomsFromSvg("third.svg");
+
+        allRooms = firstFloorRooms
+            .Concat(secondFloorRooms)
+            .Concat(thirdFloorRooms)
+            .ToList();
+    }
 
     private void ChangeFloor(ChangeEventArgs e)
     {
-        currentFloor = e.Value?.ToString();
+        currentFloor = e.Value?.ToString() ?? "first.svg";
         searchResult = "";
+        FilterRooms();
+    }
+
+    private void ShowRoomSuggestions()
+    {
+        showSuggestions = true;
+        FilterRooms();
+    }
+
+    private void FilterRooms()
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            filteredRooms = allRooms.Where(r => r.Floor == currentFloor).ToList();
+        }
+        else
+        {
+            filteredRooms = allRooms
+                .Where(r => r.Floor == currentFloor &&
+                       (r.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                        r.Id.Contains(searchText, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+        }
+    }
+
+    private void SelectRoom(Room room)
+    {
+        searchText = room.Name;
+        searchResult = $"Selected: {room.Name}";
+        showSuggestions = false;
     }
 
     private void SearchRoom()
     {
-        var room = searchText.Trim().ToUpper();
+        var room = allRooms.FirstOrDefault(r =>
+            r.Floor == currentFloor &&
+            (r.Name.Equals(searchText, StringComparison.OrdinalIgnoreCase) ||
+             r.Id.Equals(searchText, StringComparison.OrdinalIgnoreCase)));
 
-        if (string.IsNullOrWhiteSpace(room))
+        if (room != null)
         {
-            searchResult = "❗ Please enter a room number.";
-            return;
-        }
-
-        if (roomsPerFloor.TryGetValue(currentFloor, out var rooms))
-        {
-            if (rooms.Contains(room))
-            {
-                searchResult = $"✅ Room {room} is on this floor!";
-            }
-            else
-            {
-                searchResult = $"❌ Room {room} not found on this floor.";
-            }
+            searchResult = $"Found: {room.Name}";
         }
         else
         {
-            searchResult = "❌ Floor data not found.";
+            searchResult = $"Room '{searchText}' not found on this floor";
         }
     }
 }
