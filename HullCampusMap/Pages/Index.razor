@@ -1,8 +1,10 @@
 ﻿@page "/"
 @using System.Linq
+@using HullCampusMap.Services
 @using HullCampusMap.Models  <!-- Add this line -->
 @inject SvgParserService SvgParser
-@inject HttpClient Http
+@inject RoomInterop RoomInterop
+@implements IAsyncDisposable
 
 <div class="map-page">
     <!-- 🧭 Sidebar (Left Panel) -->
@@ -34,14 +36,16 @@
                     <div class="suggestions-dropdown">
                         @foreach (var room in filteredRooms)
                         {
-                            <div class="suggestion-item" @onclick="() => SelectRoom(room)">
+                            <div class="suggestion-item"
+                                 @onclick="async () => await SelectRoom(room)"
+                                 @onmouseover="() => PreviewRoom(room)">
                                 @room.Name
                             </div>
                         }
                     </div>
                 }
             </div>
-            <button @onclick="SearchRoom" class="search-btn">Search</button>
+            <button @onclick="async () => await SearchRoom()" class="search-btn">Search</button>
 
             <p class="result-text">@searchResult</p>
         </div>
@@ -51,68 +55,130 @@
     <div class="map-display">
         @if (!string.IsNullOrEmpty(currentFloor))
         {
-            <object data="@($"/svg/" + currentFloor)" type="image/svg+xml" class="svg-map" />
+            <div class="svg-container" @ref="svgContainerRef">
+                <object data="@($"/svg/" + currentFloor)"
+                        type="image/svg+xml"
+                        class="svg-map"
+                        @ref="svgObjectRef" />
+            </div>
+
+            @if (currentRoom != null)
+            {
+                <div class="room-tooltip @(isTooltipVisible ? "visible" : "")"
+                     style="@($"left:{tooltipX}px;top:{tooltipY}px")">
+                    <h3>@currentRoom.Name</h3>
+                    <p>@currentRoom.Description</p>
+                    <p>Floor: @currentFloor.Replace(".svg", "")</p>
+                </div>
+            }
         }
     </div>
 </div>
 
 @code {
+    // State variables
     private string currentFloor = "first.svg";
     private string searchText = "";
     private string searchResult = "";
     private bool showSuggestions = false;
+    private bool isTooltipVisible = false;
+    private double tooltipX;
+    private double tooltipY;
+
+    // Data collections - Initialize them here
     private List<Room> allRooms = new();
     private List<Room> filteredRooms = new();
 
+    // References
+    private ElementReference svgContainerRef;
+    private ElementReference svgObjectRef;
+    private Room? currentRoom;
+    private Room? selectedRoom;
+    private DotNetObjectReference<Index>? dotNetRef;
+
     protected override async Task OnInitializedAsync()
     {
-        var firstFloorRooms = await SvgParser.GetRoomsFromSvg("first.svg");
-        var secondFloorRooms = await SvgParser.GetRoomsFromSvg("second.svg");
-        var thirdFloorRooms = await SvgParser.GetRoomsFromSvg("third.svg");
-
-        allRooms = firstFloorRooms
-            .Concat(secondFloorRooms)
-            .Concat(thirdFloorRooms)
-            .ToList();
-    }
-
-    private void ChangeFloor(ChangeEventArgs e)
-    {
-        currentFloor = e.Value?.ToString() ?? "first.svg";
-        searchResult = "";
-        FilterRooms();
-    }
-
-    private void ShowRoomSuggestions()
-    {
-        showSuggestions = true;
-        FilterRooms();
-    }
-
-    private void FilterRooms()
-    {
-        if (string.IsNullOrWhiteSpace(searchText))
+        try
         {
-            filteredRooms = allRooms.Where(r => r.Floor == currentFloor).ToList();
+            // Load rooms for all floors
+            var tasks = new[]
+            {
+                SvgParser.GetRoomsFromSvg("first.svg"),
+                SvgParser.GetRoomsFromSvg("second.svg"),
+                SvgParser.GetRoomsFromSvg("third.svg")
+            };
+
+            var results = await Task.WhenAll(tasks);
+            allRooms = results.SelectMany(x => x).ToList();
+            FilterRooms(); // Initialize filtered rooms
         }
-        else
+        catch (Exception ex)
         {
-            filteredRooms = allRooms
-                .Where(r => r.Floor == currentFloor &&
-                       (r.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                        r.Id.Contains(searchText, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+            searchResult = $"Error loading floor plans: {ex.Message}";
         }
     }
 
-    private void SelectRoom(Room room)
+
+    [JSInvokable]
+    public async Task OnRoomClicked(string roomId)
     {
+        currentRoom = allRooms.FirstOrDefault(r => r.Id == roomId);
+        if (currentRoom != null)
+        {
+            await SelectRoom(currentRoom);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnRoomHover(string roomId)
+    {
+        currentRoom = allRooms.FirstOrDefault(r => r.Id == roomId);
+        if (currentRoom != null)
+        {
+            isTooltipVisible = true;
+            await RoomInterop.HighlightRoomAsync(svgObjectRef, currentRoom.Id, scrollToView: false);
+            StateHasChanged();
+        }
+    }
+
+    [JSInvokable]
+    public void OnRoomLeave()
+    {
+        isTooltipVisible = false;
+        StateHasChanged();
+    }
+
+    private async Task SelectRoom(Room room)
+    {
+        if (room == null) return;
+
+        selectedRoom = room;
+        currentRoom = room;
         searchText = room.Name;
         searchResult = $"Selected: {room.Name}";
         showSuggestions = false;
+        isTooltipVisible = true;
+
+        try
+        {
+            await RoomInterop.HighlightRoomAsync(svgObjectRef, room.Id);
+        }
+        catch (Exception ex)
+        {
+            searchResult = $"Error highlighting room: {ex.Message}";
+        }
+
+        StateHasChanged();
     }
 
-    private void SearchRoom()
+    private void PreviewRoom(Room room)
+    {
+        currentRoom = room;
+        isTooltipVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task SearchRoom()
     {
         var room = allRooms.FirstOrDefault(r =>
             r.Floor == currentFloor &&
@@ -121,11 +187,58 @@
 
         if (room != null)
         {
+            await SelectRoom(room);
             searchResult = $"Found: {room.Name}";
         }
         else
         {
             searchResult = $"Room '{searchText}' not found on this floor";
+            isTooltipVisible = false;
+        }
+    }
+
+    private void ChangeFloor(ChangeEventArgs e)
+    {
+        currentFloor = e.Value?.ToString() ?? "first.svg";
+        searchResult = "";
+        isTooltipVisible = false;
+        FilterRooms();
+        StateHasChanged();
+    }
+
+    private void ShowRoomSuggestions()
+    {
+        showSuggestions = true;
+        FilterRooms();
+        StateHasChanged();
+    }
+
+    private void FilterRooms()
+    {
+        filteredRooms = string.IsNullOrWhiteSpace(searchText)
+            ? allRooms.Where(r => r.Floor == currentFloor).ToList()
+            : allRooms.Where(r => r.Floor == currentFloor &&
+                (r.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                 r.Id.Contains(searchText, StringComparison.OrdinalIgnoreCase))).ToList();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (dotNetRef != null)
+            {
+                dotNetRef.Dispose();
+                dotNetRef = null;
+            }
+            if (RoomInterop != null)
+            {
+                await RoomInterop.DisposeAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Dispose error: {ex.Message}");
         }
     }
 }

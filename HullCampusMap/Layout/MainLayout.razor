@@ -1,21 +1,57 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="main-layout">
-    <!-- Top Navigation Bar -->
-    <header class="navbar">
-        <div class="nav-brand">
-            <img src="images/uoh-logo.png" alt="University of Hull" />
-            <span>University of Hull Campus Map</span>
-        </div>
-    </header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="University of Hull Interactive Campus Map" />
+    <title>University of Hull Campus Map</title>
+</head>
 
-    <!-- Main Page Content -->
-    <main class="main-content">
-        @Body
-    </main>
+<body>
+    <div class="main-layout">
+        <!-- Top Navigation Bar with improved accessibility -->
+        <header class="navbar" role="banner">
+            <div class="nav-brand">
+                <a href="/" aria-label="Home">
+                    <img src="images/uoh-logo.png"
+                         alt="University of Hull Logo"
+                         width="120"
+                         height="auto"
+                         loading="lazy" />
+                    <span>University of Hull Campus Map</span>
+                </a>
+            </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        &copy; @(DateTime.Now.Year) University of Hull | Interactive Map Project
-    </footer>
-</div>
+            <!-- Optional: Add skip to content link for accessibility -->
+            <a href="#main-content" class="skip-link">Skip to main content</a>
+        </header>
+
+        <!-- Main Page Content with proper landmark role -->
+        <main id="main-content" class="main-content" role="main">
+            @Body
+        </main>
+
+        <!-- Footer with additional links and semantic markup -->
+        <footer class="footer" role="contentinfo">
+            <div class="footer-content">
+                <p>&copy; @(DateTime.Now.Year) University of Hull | Interactive Map Project</p>
+                <nav class="footer-links" aria-label="Footer navigation">
+                    <ul>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/accessibility">Accessibility</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
+
+@code {
+    // You can add any necessary lifecycle methods or properties here
+    // For example, you might want to track page views or handle resizing
+}

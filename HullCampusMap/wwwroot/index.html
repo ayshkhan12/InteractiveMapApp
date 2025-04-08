@@ -1,22 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HullCampusMap</title>
-    <base href="/" />
-    <link rel="stylesheet" href="css/app.css" />
-    <link href="css/site.css" rel="stylesheet" />
+    <!-- Primary Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="description" content="Interactive campus map for the University of Hull - Find buildings, rooms, and facilities">
+    <meta name="theme-color" content="#0056b3">
+    <meta name="author" content="University of Hull">
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="University of Hull Campus Map">
+    <meta property="og:description" content="Interactive campus map for the University of Hull">
+    <meta property="og:image" content="/images/social-preview.jpg">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+
+    <title>University of Hull | Interactive Campus Map</title>
+    <base href="/">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="css/app.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="_framework/blazor.webassembly.js" as="script">
+    <noscript><link rel="stylesheet" href="css/app.css"></noscript>
+
+    <!-- Favicon and App Icons -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/app.css" media="print" onload="this.media='all'">
+
+    <!-- Preconnect to External Resources -->
+    <link rel="preconnect" href="https://cdn.universityofhull.com" crossorigin>
 </head>
 <body>
-    <div id="app"></div>
+    <!-- Skip to Content Link (Accessibility) -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
+    <!-- Loading Indicator -->
+    <div id="app-loading" class="loading-overlay" aria-live="polite" aria-busy="true">
+        <div class="loading-content">
+            <div class="loading-spinner" aria-hidden="true"></div>
+            <h1 class="loading-text">Loading Campus Map...</h1>
+            <p class="loading-subtext">Please wait while we load the interactive map</p>
+        </div>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
+    <!-- Main App Container -->
+    <main id="app" role="main"></main>
+
+    <!-- Error UI -->
+    <div id="blazor-error-ui" class="blazor-error" role="alert" hidden>
+        <div class="error-content">
+            <span class="error-icon" aria-hidden="true">⚠️</span>
+            <div>
+                <h2 class="error-title">Application Error</h2>
+                <p class="error-message">An unhandled error has occurred.</p>
+                <div class="error-actions">
+                    <a href="/" class="error-button reload">Reload Page</a>
+                    <button class="error-button dismiss">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Remove no-js class and enable JS-powered features
+        document.documentElement.classList.remove('no-js');
+        document.documentElement.classList.add('js');
+
+        // Load CSS asynchronously fallback
+        function loadCSS(url) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = url;
+            document.head.appendChild(link);
+        }
+
+        if (!document.querySelector('link[rel="stylesheet"]')) {
+            loadCSS('css/app.css');
+        }
+    </script>
+
+    <script src="svgInterop.js" defer></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        (function () {
+            // Error UI handling
+            const errorUi = document.getElementById('blazor-error-ui');
+            const reloadButtons = document.querySelectorAll('.reload');
+            const dismissButton = document.querySelector('.dismiss');
+
+            dismissButton.addEventListener('click', () => {
+                errorUi.hidden = true;
+            });
+
+            reloadButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    location.reload();
+                });
+            });
+
+            // Start Blazor
+            Blazor.start({
+                configureSignalR: builder => {
+                    builder.withUrl("/_blazor");
+                }
+            }).then(() => {
+                // Hide loading indicator when Blazor is ready
+                document.getElementById('app-loading').style.display = 'none';
+            }).catch(err => {
+                console.error('Blazor startup error:', err);
+                errorUi.hidden = false;
+                document.getElementById('app-loading').style.display = 'none';
+            });
+        })();
+    </script>
 </body>
 </html>
